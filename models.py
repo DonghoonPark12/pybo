@@ -10,6 +10,7 @@ class Question(Base):
     subject = Column(String(100), nullable=False) # null 값을 허용하지 않으려면 nullable=False로 설정해야 한다
     content = Column(Text, nullable=False) # 글 내용처럼 글자 수를 제한할 수 없는 텍스트는 Text를 사용
     create_date = Column(DateTime, nullable=False)
+
     answer = relationship("Answer", back_populates="question")
 
 # question_id

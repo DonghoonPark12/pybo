@@ -46,3 +46,12 @@ parent = relationship("Parent", backref="children")  # only on the child class
 - $ pip install alembic
 - $ alembic init alembic
 - migrations/env.py, alembic.ini 파일 수정
+
+---
+### (3) pydantic
+- FastAPI의 입출력 스펙을 정의하고 그 값을 검증하기 위해 사용하는 라이브러리
+- FastAPI 설치시 함께 설치되기 때문에 따로 설치할 필요는 없다.
+- (Pydantic을 이용한) Schema를 사용하는 것은 입출력 값이 정확한지 검증하는 것 외에,
+- DB에 저장하는 것과 실제 고객에 응답으로 전달하는 것을 다르게 하기 위함도 있다.
+
+- https://pydantic-docs.helpmanual.io/

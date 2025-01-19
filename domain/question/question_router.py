@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 
 from models import Question
 from database import get_db
+from domain.question import question_schema
 
 # router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
 router = APIRouter(
     prefix="/api/question",
 )
 
-@router.get("/list")
+@router.get("/list", response_model=list[question_schema.Question])
 def quesion_list(db: Session = Depends(get_db)):
     #db = SessionLocal()
     _question_list = db.query(Question).order_by(Question.create_date.desc()).all()
