@@ -1,11 +1,20 @@
 <script>
-    let message, promise;
+    let question_list = []
 
-    fetch("http://127.0.0.1:8000/hello").then(response => {
-        response.json().then(json => {
-            message = json.message;
+    function get_question_list() {
+        fetch("http://127.0.0.1:8000/api/question/list").then((response) => {
+            response.json().then((json) => {question_list = json})
         })
-    });
+    }
+
+    get_question_list()
+    // let message, promise;
+
+    // fetch("http://127.0.0.1:8000/hello").then(response => {
+    //     response.json().then(json => {
+    //         message = json.message;
+    //     })
+    // });
 
     // async function hello() {
     //     const res = await fetch("http://127.0.0.1:8000/hello");
@@ -27,7 +36,12 @@
 <!--  <h1>{message}</h1>-->
 <!--{/await}-->
 
-<h1>{message}</h1>
+<!--<h1>{message}</h1>-->
+<ul>
+    {#each question_list as question}
+        <li>{question.subject}</li>
+    {/each}
+</ul>
 
 <!--
 <script> 블록에 message라는 변수를 생성하고 FastAPI의 hello API를 호출하여 돌려받은 값을 message 변수에 담았다.
