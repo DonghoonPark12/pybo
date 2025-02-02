@@ -1,3 +1,10 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
+
+# npm create vite@latest frontend -- --template svelte
+    # cd frontend
+    # npm install
+# npm install svelte-spa-router
+# npm install bootstrap
+# $ npm run dev

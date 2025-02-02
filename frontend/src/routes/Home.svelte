@@ -40,19 +40,36 @@
     // promise = hello();
 </script>
 
-<!--{#await promise}-->
-<!--  <p>...waiting</p>-->
-<!--{:then message}-->
-<!--  <h1>{message}</h1>-->
-<!--{/await}-->
+<div class="container my-3">
+    <table class="table">
+        <thead>
+            <tr class="table-dark">
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성일시</th>
+            </tr>
+        </thead>
 
-<!--<h1>{message}</h1>-->
-<ul>
-    {#each question_list as question}
-<!--        <li>{question.subject}</li>-->
-        <li><a use:link href="/detail/{question.id}">{question.subject}</a></li>
-    {/each}
-</ul>
+        <tbody>
+            {#each question_list as question, i}
+                <tr>
+                    <td>{i+1}</td>
+                    <td> <a use:link href="/detail/{question.id}">{question.subject}</a> </td>
+                    <td>{question.create_date}</td>
+                </tr>
+            {/each}
+        </tbody>
+
+    </table>
+</div>
+
+<!--&lt;!&ndash;<h1>{message}</h1>&ndash;&gt;-->
+<!--<ul>-->
+<!--    {#each question_list as question}-->
+<!--&lt;!&ndash;        <li>{question.subject}</li>&ndash;&gt;-->
+<!--        <li><a use:link href="/detail/{question.id}">{question.subject}</a></li>-->
+<!--    {/each}-->
+<!--</ul>-->
 
 
 <!--a 태그에 use:link 를 사용하는 이유
