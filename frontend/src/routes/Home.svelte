@@ -61,6 +61,7 @@
         </tbody>
 
     </table>
+    <a use:link href="/question-create" class="btn btn-primary">질문 등록하기</a>
 </div>
 
 <!--&lt;!&ndash;<h1>{message}</h1>&ndash;&gt;-->
