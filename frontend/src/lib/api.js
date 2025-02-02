@@ -22,7 +22,14 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
     }
 
     fetch(_url, options).then(response => {
-        response.json().then(json => {
+        if (response.status == 204) {
+            if(success_callback) {
+                success_callback()
+            }
+            return
+        }
+        response.json()
+            .then(json => {
             if (response.status >=200 && response.status < 300) {
                 if (success_callback) {
                     success_callback(json)
@@ -42,6 +49,7 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
 
 export default fastapi
 
+// 응답 상태코드가 204인 경우에는 응답 결과가 없더라도 success_callback을 실행할 수 있도록 다음과 같이 수정
 // peration이 'get'인 경우에는 파라미터를 GET 방식에 맞게끔 URLSearchParams를 사용하여 파라미터를 조립하도록 했고
 // 'get'이 아닌 경우에만 options['body'] 항목에 전달 받은 파라미터 값을 설정하게 했다.
 // body 항목에 값을 설정할 때는 JSON.stringify(params) 처럼 params를 JSON 문자열로 변경해야 한다.

@@ -23,7 +23,7 @@ def answer_create(question_id: int, _answer_create: AnswerCreate, db: Session = 
     question = get_question(db, question_id=question_id)
     if not question:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
-    create_answer(db, question, answer_create=_answer_create)
+    create_answer(db, question=question, answer_create=_answer_create)
 
 
 def create_answer(db: Session, question: Question, answer_create: AnswerCreate):
