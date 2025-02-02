@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 
 #from database import SessionLocal
 
-from models import Question
 from database import get_db
+from models import Question
 from domain.question import question_schema
 
 # router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
