@@ -3,6 +3,7 @@
     import Home from "./routes/Home.svelte"
     import Detail from "./routes/Detail.svelte"
     import QuestionCreate from "./routes/QuestionCreate.svelte"
+    import Navigation from "./components/Navigation.svelte";
 
     const routes = {
         // / 주소에 매핑되는 컴포넌트로 <Home />을 등록
@@ -13,4 +14,5 @@
     }
 </script>
 
+<Navigation />
 <Router {routes} />
