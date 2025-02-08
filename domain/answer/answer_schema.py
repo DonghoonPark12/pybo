@@ -17,7 +17,7 @@ class Answer(BaseModel):
     create_date: datetime.datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 '''
 Q. 입력 항목을 처리하는 스키마는 왜 필요할까?
 - 답변 등록 API는 post 방식이고, content라는 입력 항목이 있다.

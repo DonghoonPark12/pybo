@@ -4,6 +4,7 @@ from pydantic import BaseModel, field_validator
 
 from domain.answer.answer_schema import Answer
 
+
 class Question(BaseModel):
     id: int
     subject: str
@@ -12,7 +13,7 @@ class Question(BaseModel):
     answers: list[Answer] = []
 
     class Config:
-        orm_mode = True # orm 모드를 활성화 하면, 모델의 항목이 자동으로 스키마로 매핑된다.
+        from_attributes = True # orm 모드를 활성화 하면, 모델의 항목이 자동으로 스키마로 매핑된다.
 
 class QuestionCreate(BaseModel):
     subject: str
@@ -23,6 +24,10 @@ class QuestionCreate(BaseModel):
         if not v or not v.strip():
             raise ValueError("빈 값은 허용되지 않습니다.")
         return v
+
+class QuestionList(BaseModel):
+    total: int = 0
+    question_list: list[Question] = []
 
 '''
 models.py 파일에 정의한 Question 클래스는 Question 모델이라 하겠다.

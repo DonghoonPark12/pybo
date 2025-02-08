@@ -16,13 +16,19 @@ router = APIRouter(
     prefix="/api/question",
 )
 
-@router.get("/list", response_model=list[question_schema.Question])
-def question_list(db: Session = Depends(get_db)):
+@router.get("/list", response_model=question_schema.QuestionList)
+def question_list(db: Session = Depends(get_db),
+                  page: int = 0, size: int = 10):
     #db = SessionLocal()
     #_question_list = db.query(Question).order_by(Question.create_date.desc()).all()
-    _question_list = get_question_list(db)
+    total, _question_list = get_question_list(
+        db, skip=page * size, limit=size
+    )
     #db.close() # 커넥션 풀을 종료, 세션 종료가 아니다.
-    return _question_list
+    return {
+        'total': total,
+        'question_list': _question_list
+    }
 
 @router.get("/detail/{question_id}", response_model=question_schema.Question)
 def question_detail(question_id: int, db: Session = Depends(get_db)):
@@ -33,9 +39,13 @@ def question_detail(question_id: int, db: Session = Depends(get_db)):
 def question_create(_question_create: QuestionCreate, db: Session = Depends(get_db)):
     create_question(db=db, question_create=_question_create)
 
-def get_question_list(db: Session):
-    question_list = db.query(Question).order_by(Question.create_date.desc()).all()
-    return question_list
+def get_question_list(db: Session, skip: int = 0, limit: int = 10):
+    _question_list = db.query(Question)\
+        .order_by(Question.create_date.desc())
+
+    total = _question_list.count()
+    _question_list = _question_list.offset(skip).limit(limit).all()
+    return total, _question_list # (전체 건수, 페이징 적용된 질문 목록)
 
 def get_question(db: Session, question_id: int):
     question = db.query(Question).get(question_id)
@@ -47,6 +57,7 @@ def create_question(db: Session, question_create: QuestionCreate):
                            create_date=datetime.now()) # pydantic 스키마로 부터 ORM을 만든다.
     db.add(db_question)
     db.commit()
+
 
 '''
 response_model=list[question_schema.Question] 의미는

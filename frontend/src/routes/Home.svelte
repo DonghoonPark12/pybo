@@ -5,7 +5,9 @@
     let question_list = []
 
     function get_question_list() {
-        fastapi('get', '/api/question/list', {}, (json) => {question_list = json})
+        fastapi('get', '/api/question/list', {}, (json) => {
+            question_list = json.question_list
+        })
 
         // success_callback 함수를 화살표 함수로 작성하여 전달
         // 화살표 함수의 내용은 응답으로 받은 json 데이터를 question_list에 대입하라는 내용이다.
