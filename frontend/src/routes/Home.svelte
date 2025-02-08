@@ -3,10 +3,24 @@
     import {link} from 'svelte-spa-router'
 
     let question_list = []
+    let size = 10
+    let page = 0
+    let total = 0
 
-    function get_question_list() {
-        fastapi('get', '/api/question/list', {}, (json) => {
+    // 스벨트에서 변수앞에 $: 기호를 붙이면 해당 변수는 반응형 변수가 된다.
+    // total 변수의 값이 API 호출로 인해 그 값이 변하면 total_page 변수의 값도 실시간으로 재 계산된다는 의미이다.
+    $: total_page = Math.ceil(total / size)
+
+    function get_question_list(_page) {
+        let params = {
+            page: _page,
+            size: size,
+        }
+
+        fastapi('get', '/api/question/list', params, (json) => {
             question_list = json.question_list
+            page = _page
+            total = json.total
         })
 
         // success_callback 함수를 화살표 함수로 작성하여 전달
@@ -19,7 +33,7 @@
         // })
     }
 
-    get_question_list()
+    get_question_list(0)
     // let message, promise;
 
     // fetch("http://127.0.0.1:8000/hello").then(response => {
@@ -61,8 +75,30 @@
                 </tr>
             {/each}
         </tbody>
-
     </table>
+
+    <!--    https://getbootstrap.com/docs/5.2/components/pagination/-->
+    <!-- 페이징처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        <li class="page-item {page <= 0 && 'disabled'}">
+            <button class="page-link" on:click="{() => get_question_list(page-1)}">Previous</button>
+        </li>
+        <!-- 페이지번호 -->
+        {#each Array(total_page) as _, loop_page}
+            {#if loop_page >= page && loop_page <= page+5}
+            <li class="page-item {loop_page === page && 'active'}">
+                <button on:click="{() => get_question_list(loop_page)}" class="page-link">{loop_page+1}</button>
+            </li>
+            {/if}
+        {/each}
+        <!-- 다음페이지 -->
+        <li class="page-item {page >= total_page-1 && 'disabled'}">
+            <button class="page-link" on:click="{() => get_question_list(page+1)}">Next</button>
+        </li>
+    </ul>
+    <!-- 페이징처리 끝 -->
+
     <a use:link href="/question-create" class="btn btn-primary">질문 등록하기</a>
 </div>
 
