@@ -86,7 +86,8 @@
         </li>
         <!-- 페이지번호 -->
         {#each Array(total_page) as _, loop_page}
-            {#if loop_page >= page && loop_page <= page+5}
+            <!--    {#if loop_page >= page && loop_page <= page+5}-->
+            {#if loop_page >= Math.floor(page/6) * 6 && loop_page < Math.floor(page/6) * 6 + 6}
             <li class="page-item {loop_page === page && 'active'}">
                 <button on:click="{() => get_question_list(loop_page)}" class="page-link">{loop_page+1}</button>
             </li>
