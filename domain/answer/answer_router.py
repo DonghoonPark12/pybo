@@ -1,7 +1,8 @@
 from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
 
 from database import get_db
 from models import Question, Answer

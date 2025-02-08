@@ -9,7 +9,7 @@ class Question(BaseModel):
     subject: str
     content: str
     create_date: datetime.datetime
-    answer: list[Answer] = []
+    answers: list[Answer] = []
 
     class Config:
         orm_mode = True # orm 모드를 활성화 하면, 모델의 항목이 자동으로 스키마로 매핑된다.
