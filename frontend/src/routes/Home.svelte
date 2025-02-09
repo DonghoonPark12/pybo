@@ -1,10 +1,11 @@
 <script>
     import fastapi from "../lib/api"
     import {link} from 'svelte-spa-router'
+    import {page} from '../lib/store'
 
     let question_list = []
     let size = 10
-    let page = 0
+    //let page = 0
     let total = 0
 
     // 스벨트에서 변수앞에 $: 기호를 붙이면 해당 변수는 반응형 변수가 된다.
@@ -19,7 +20,7 @@
 
         fastapi('get', '/api/question/list', params, (json) => {
             question_list = json.question_list
-            page = _page
+            $page = _page
             total = json.total
         })
 
@@ -33,7 +34,7 @@
         // })
     }
 
-    get_question_list(0)
+    get_question_list($page)
     // let message, promise;
 
     // fetch("http://127.0.0.1:8000/hello").then(response => {
@@ -81,21 +82,21 @@
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center">
         <!-- 이전페이지 -->
-        <li class="page-item {page <= 0 && 'disabled'}">
-            <button class="page-link" on:click="{() => get_question_list(page-1)}">Previous</button>
+        <li class="page-item {$page <= 0 && 'disabled'}">
+            <button class="page-link" on:click="{() => get_question_list($page-1)}">Previous</button>
         </li>
         <!-- 페이지번호 -->
         {#each Array(total_page) as _, loop_page}
             <!--    {#if loop_page >= page && loop_page <= page+5}-->
-            {#if loop_page >= Math.floor(page/6) * 6 && loop_page < Math.floor(page/6) * 6 + 6}
-            <li class="page-item {loop_page === page && 'active'}">
+            {#if loop_page >= Math.floor($page/6) * 6 && loop_page < Math.floor($page/6) * 6 + 6}
+            <li class="page-item {loop_page === $page && 'active'}">
                 <button on:click="{() => get_question_list(loop_page)}" class="page-link">{loop_page+1}</button>
             </li>
             {/if}
         {/each}
         <!-- 다음페이지 -->
-        <li class="page-item {page >= total_page-1 && 'disabled'}">
-            <button class="page-link" on:click="{() => get_question_list(page+1)}">Next</button>
+        <li class="page-item {$page >= total_page-1 && 'disabled'}">
+            <button class="page-link" on:click="{() => get_question_list($page+1)}">Next</button>
         </li>
     </ul>
     <!-- 페이징처리 끝 -->
