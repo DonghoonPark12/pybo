@@ -2,14 +2,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from core.config import get_settings
+
 # sqlite3 데이터베이스의 파일을 의미하며 프로젝트 루트 디렉터리에 저장한다는 의미
-SQLALCHEMY_DATABASE_URL = "sqlite:///./donghoon_api.db"
+SQLALCHEMY_DATABASE_URL = get_settings().database_url
 
 # create_engine은 커넥션 풀을 생성
 # 컨넥션 풀이란 데이터베이스에 접속하는 객체를 일정 갯수만큼 만들어 놓고 돌려가며 사용하는 것을 말한다.
 # (컨넥션 풀은 데이터 베이스에 접속하는 세션수를 제어하고, 또 세션 접속에 소요되는 시간을 줄이고자 하는 용도로 사용한다.)
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    url=SQLALCHEMY_DATABASE_URL,
+    #connect_args={"check_same_thread": False}
 )
 
 # SessionLocal은 데이터베이스에 접속하기 위해 필요한 클래스

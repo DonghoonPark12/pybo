@@ -21,7 +21,7 @@ class Answer(BaseModel):
 '''
 Q. 입력 항목을 처리하는 스키마는 왜 필요할까?
 - 답변 등록 API는 post 방식이고, content라는 입력 항목이 있다.
-- 답변 등록 라우터에서 content 값을 읽기 위해서는 반드시 content 항목을 포함하는 Pydancit 스키마를 통해 읽어야 한다.
+- 답변 등록 라우터에서 content 값을 읽기 위해서는 반드시 content 항목을 포함하는 Pydantic 스키마를 통해 읽어야 한다.
 - 스키마를 사용하지 않고, 라우터 함수의 매개변수에 content: str을 추가하여 값을 읽을 수 없다.
 - 왜냐하면 get 방식이 아닌, post, put, delete 방식은 (body에 데이터를 담아 보내며) Pydantic 스키마를 통해 읽어야 하기 때문이다.
 - 반대로 get 방식은 query parameter로 데이터를 전달하기 때문에 Pydantic 스키마를 사용하지 않아도 된다. 
