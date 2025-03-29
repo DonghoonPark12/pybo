@@ -2,6 +2,8 @@
     import fastapi from "../lib/api"
     import {link} from 'svelte-spa-router'
     import {page} from '../lib/store'
+    import moment from 'moment/min/moment-with-locales'
+    moment.locales('ko')
 
     let question_list = []
     let size = 10
@@ -11,6 +13,7 @@
     // 스벨트에서 변수앞에 $: 기호를 붙이면 해당 변수는 반응형 변수가 된다.
     // total 변수의 값이 API 호출로 인해 그 값이 변하면 total_page 변수의 값도 실시간으로 재 계산된다는 의미이다.
     $: total_page = Math.ceil(total / size)
+    $: get_question_list($page)
 
     function get_question_list(_page) {
         let params = {
@@ -34,7 +37,7 @@
         // })
     }
 
-    get_question_list($page)
+    $: get_question_list($page)
     // let message, promise;
 
     // fetch("http://127.0.0.1:8000/hello").then(response => {
@@ -72,7 +75,7 @@
                 <tr>
                     <td>{i+1}</td>
                     <td> <a use:link href="/detail/{question.id}">{question.subject}</a> </td>
-                    <td>{question.create_date}</td>
+                    <td>{moment(question.create_date).format("YYYY년 MM월 DD일 hh:mm a")}</td>
                 </tr>
             {/each}
         </tbody>

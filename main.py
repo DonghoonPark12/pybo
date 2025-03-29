@@ -4,12 +4,12 @@ from starlette.middleware.cors import CORSMiddleware
 from domain.question import question_router
 from domain.answer import answer_router
 
-# import models
-# from database import engine
+import models
+from database import engine
 #
 # # Base 클래스를 상속받은 모든 클래스를 데이터베이스에 생성
 # # 데이터베이스에 테이블이 존재하지 않을 경우에만 테이블을 생성
-# models.Base.metadata.create_all(bind=engine) # FastAPI 실행시 필요한 테이블들이 모두 생성된다.
+models.Base.metadata.create_all(bind=engine) # FastAPI 실행시 필요한 테이블들이 모두 생성된다.
 
 app = FastAPI()
 
