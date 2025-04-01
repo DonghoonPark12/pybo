@@ -38,6 +38,15 @@ class Answer(Base):
     # 연결과 참조는 다르다.
     question = relationship("Question", back_populates="answers") # Quesion 모델의 answers 속성을 참조한다.
 
+
+class User(Base):
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(100), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+
 '''
 >>> a
 <models.Answer object at 0x000001672C7CB860>

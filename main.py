@@ -3,9 +3,11 @@ from starlette.middleware.cors import CORSMiddleware
 
 from domain.question import question_router
 from domain.answer import answer_router
+from domain.user import user_router
 
 import models
 from database import engine
+
 #
 # # Base 클래스를 상속받은 모든 클래스를 데이터베이스에 생성
 # # 데이터베이스에 테이블이 존재하지 않을 경우에만 테이블을 생성
@@ -33,3 +35,4 @@ app.add_middleware(
 
 app.include_router(question_router.router)
 app.include_router(answer_router.router)
+app.include_router(user_router.router)
