@@ -1,8 +1,15 @@
+import qs from "qs"
+
 const fastapi = (operation, url, params, success_callback, failure_callback) => {
     let method = operation
     let content_type = 'application/json'
     let body = JSON.stringify(params)
 
+    if(operation === 'login') {
+        method = 'post'
+        content_type = 'application/x-www-form-urlencoded'
+        body = qs.stringify(params) // qs.stringify(params)는 params 데이터를
+    }                               // 'application/x-www-form-urlencoded' 형식에 맞게끔 변환하는 역할
 
     //let _url = 'http://127.0.0.1:8000' + url
     let _url = import.meta.env.VITE_SERVER_URL + url

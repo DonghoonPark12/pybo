@@ -11,7 +11,7 @@ from domain.user import user_schema, user_crud
 from domain.user.user_crud import pwd_context
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
-SECRET_KEY = "4ab2fce7a6bd79e1c014396315ed322dd6edb1c5d975c6b74a2904135172c03c"
+SECRET_KEY = "592e24e439d7e00fd296acde214b9be419e0fc298644557514e035b76fe660b4"
 ALGORITHM = "HS256"
 
 router = APIRouter(
