@@ -2,6 +2,11 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 pymysql
+pydantic[email]
+passlib[bcrypt]
+bcrypt
+python-multipart
+python-jose[cryptography]
 
 # npm create vite@latest frontend -- --template svelte
     # cd frontend
