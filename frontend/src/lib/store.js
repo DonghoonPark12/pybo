@@ -24,3 +24,8 @@ const persist_storage = (key, initValue) => {
 
 export const page = persist_storage("page", 0)
 
+// 로그인 성공시 취득한 액세스 토큰과 사용자명을 스토어에 저장하고 내비게이션 바에도 로그인 여부를 표시
+export const access_token = persist_storage("access_token", "")
+export const username = persist_storage("username", "")
+export const is_login = persist_storage("is_login", false)
+
