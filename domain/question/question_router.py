@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 #from database import SessionLocal
 
 from database import get_db
-from models import Question
+from domain.user.user_router import get_current_user
+from models import Question, User
 from domain.question import question_schema
 from domain.question.question_schema import QuestionCreate
 
@@ -36,8 +37,9 @@ def question_detail(question_id: int, db: Session = Depends(get_db)):
     return _question
 
 @router.post("/create", status_code=status.HTTP_204_NO_CONTENT)
-def question_create(_question_create: QuestionCreate, db: Session = Depends(get_db)):
-    create_question(db=db, question_create=_question_create)
+def question_create(_question_create: QuestionCreate, db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
+    create_question(db=db, question_create=_question_create, user=current_user)
 
 def get_question_list(db: Session, skip: int = 0, limit: int = 10):
     _question_list = db.query(Question)\
@@ -51,10 +53,11 @@ def get_question(db: Session, question_id: int):
     question = db.query(Question).get(question_id)
     return question
 
-def create_question(db: Session, question_create: QuestionCreate):
+def create_question(db: Session, question_create: QuestionCreate, user: User):
     db_question = Question(subject=question_create.subject,
                            content=question_create.content,
-                           create_date=datetime.now()) # pydantic 스키마로 부터 ORM을 만든다.
+                           create_date=datetime.now(),
+                           user=user) # pydantic 스키마로 부터 ORM을 만든다.
     db.add(db_question)
     db.commit()
 

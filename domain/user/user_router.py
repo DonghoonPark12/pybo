@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
-from jose import jwt
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -13,6 +13,7 @@ from domain.user.user_crud import pwd_context
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 SECRET_KEY = "592e24e439d7e00fd296acde214b9be419e0fc298644557514e035b76fe660b4"
 ALGORITHM = "HS256"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
 
 router = APIRouter(
     prefix="/api/user",
@@ -59,4 +60,27 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
         "token_type": "bearer",
         "username": user.username
     }
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    # 헤더 정보의 토큰값을 읽어 사용자 객체를 리턴
+    # 매개변수로 사용한 token의 값은 FastAPI의 security 패키지에 있는 OAuth2PasswordBearer에 의해 자동으로 매핑된다
+    # jwt.decode 함수는 토큰을 복호화하여 토큰에 담겨 있는 사용자명을 얻어낼수 있다.
+    # 만약 사용자명이 없거나 해당 사용자명으로 사용자 데이터 조회에 실패할 경우에는 credentials_exception 예외를 발생
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    else:
+        user = user_crud.get_user(db, username=username)
+        if user is None:
+            raise credentials_exception
+        return user
 

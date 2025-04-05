@@ -13,7 +13,9 @@ class Question(Base):
     subject = Column(String(100), nullable=False) # null 값을 허용하지 않으려면 nullable=False로 설정해야 한다
     content = Column(Text, nullable=False) # 글 내용처럼 글자 수를 제한할 수 없는 텍스트는 Text를 사용
     create_date = Column(DateTime, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
 
+    user = relationship("User", backref="question_users")
     answers = relationship("Answer", back_populates="question") # Answer 모델의 question 속성을 참조한다.
 
 # question_id
@@ -33,10 +35,13 @@ class Answer(Base):
     # 답변을 질문과 연결하기 위한 추가 속성, 서로 연결할 때는 ForiegnKey를 사용한다.
     # Qustion 테이블의 id 칼럽과 연결이 된다.
     question_id = Column(Integer, ForeignKey("question.id"))
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
+
     #question = relationship("Question", back_ref="answers")
     # replationship()으로 question 속성을 생성하면, answer.question.subject 처럼 질문의 제목을 참조할 수 있다.
     # 연결과 참조는 다르다.
     question = relationship("Question", back_populates="answers") # Quesion 모델의 answers 속성을 참조한다.
+    user = relationship("User", backref="answers_users")
 
 
 class User(Base):

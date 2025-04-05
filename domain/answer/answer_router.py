@@ -5,7 +5,8 @@ from starlette import status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Question, Answer
+from domain.user.user_router import get_current_user
+from models import Question, Answer, User
 from domain.answer.answer_schema import AnswerCreate
 from domain.question.question_router import get_question
 
@@ -14,7 +15,8 @@ router = APIRouter(
 )
 
 @router.post("/create/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
-def answer_create(question_id: int, _answer_create: AnswerCreate, db: Session = Depends(get_db)):
+def answer_create(question_id: int, _answer_create: AnswerCreate, db: Session = Depends(get_db),
+                  current_user: User = Depends(get_current_user)):
     '''
     Description
         - 프론트엔드에서 API 호출시 파라미터로 전달한 content가 AnswerCreate 스키마에 자동으로 매핑된다.
@@ -25,10 +27,11 @@ def answer_create(question_id: int, _answer_create: AnswerCreate, db: Session = 
     question = get_question(db, question_id=question_id)
     if not question:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
-    create_answer(db, question=question, answer_create=_answer_create)
+    create_answer(db, question=question, answer_create=_answer_create, user=current_user)
 
 
-def create_answer(db: Session, question: Question, answer_create: AnswerCreate):
-    db_answer = Answer(question=question, content=answer_create.content, create_date=datetime.now())
+def create_answer(db: Session, question: Question, answer_create: AnswerCreate, user: User):
+    db_answer = Answer(question=question, content=answer_create.content, create_date=datetime.now(),
+                       user=user)
     db.add(db_answer)
     db.commit()
