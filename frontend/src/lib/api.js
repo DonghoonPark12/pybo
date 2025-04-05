@@ -1,4 +1,7 @@
 import qs from "qs"
+import { access_token, username, is_login } from "./store"
+import { get } from 'svelte/store'
+import { push } from 'svelte-spa-router'
 
 const fastapi = (operation, url, params, success_callback, failure_callback) => {
     let method = operation
@@ -24,6 +27,14 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
         }
     }
 
+    // svelte 컴포넌트가 아닌 fastapi 함수는 스토어 변수를 사용할 때 $access_token 처럼 $ 기호로 참조할 수 없다.
+    // 따라서 스토어 변수의 값을 읽으려면 get 함수를 사용해야 하고 값을 저장할때는 access_token.set 처럼 set 함수를 사용해야 한다.
+    const _access_token = get(access_token)
+    // 스토어 변수인 access_token에 값이 있을 경우에 HTTP 헤더에 Authorization 항목을 추가
+    if (_access_token) {
+        options.headers["Authorization"] = "Bearer " + _access_token
+    }
+
     if (method !== 'get') {
         options['body'] = body
     }
@@ -41,6 +52,12 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
                 if (success_callback) {
                     success_callback(json)
                 }
+            }else if(operation !== 'login' && response.status === 401) { // token time out
+                access_token.set('')
+                username.set('')
+                is_login.set(false)
+                alert("로그인이 필요합니다.")
+                push('/user-login')
             }
             else {
                 if (failure_callback){

@@ -44,8 +44,13 @@ parent = relationship("Parent", backref="children")  # only on the child class
   - migrations 디렉터리는 alembic 도구를 사용할 때 생성되는 리비전 파일들을 저장하는 용도
   - alembic.ini 파일은 alembic의 환경설정 파일
 - $ pip install alembic
-- $ alembic init alembic
+- $ alembic init migrations (최초 한번만 수행)
 - migrations/env.py, alembic.ini 파일 수정
+- models.Base.metadata.create_all(bind=engine)는 테이블을 생성하는 매우 간단한 방법이지만, 
+  테이블이 존재하지 않을 때만 생성한다. 따라서, 생성된 테이블의 열을 추가 한다던지 스키마를 업데이트 할 경우 
+  아래의 명령을 사용하도록 한다.
+  - $ alembic revision --autogenerate
+  - $ alembic upgrade head
 
 ---
 ### (3) pydantic
