@@ -1,8 +1,10 @@
 import datetime
+from typing import Optional
 
 from pydantic import BaseModel, field_validator
 
 from domain.answer.answer_schema import Answer
+from domain.user.user_schema import User
 
 
 class Question(BaseModel):
@@ -11,6 +13,7 @@ class Question(BaseModel):
     content: str
     create_date: datetime.datetime
     answers: list[Answer] = []
+    user: Optional[User]
 
     class Config:
         from_attributes = True # orm 모드를 활성화 하면, 모델의 항목이 자동으로 스키마로 매핑된다.
@@ -28,6 +31,10 @@ class QuestionCreate(BaseModel):
 class QuestionList(BaseModel):
     total: int = 0
     question_list: list[Question] = []
+
+
+class QuestionUpdate(QuestionCreate):
+    question_id: int
 
 '''
 models.py 파일에 정의한 Question 클래스는 Question 모델이라 하겠다.
