@@ -20,9 +20,18 @@ class Answer(BaseModel):
     content: str
     create_date: datetime.datetime
     user: Optional[User]
+    question_id: int
+    modify_date: Optional[datetime.datetime]
 
     class Config:
         from_attributes = True
+
+class AnswerUpdate(AnswerCreate):
+    answer_id: int
+
+class AnswerDelete(BaseModel):
+    answer_id: int
+
 '''
 Q. 입력 항목을 처리하는 스키마는 왜 필요할까?
 - 답변 등록 API는 post 방식이고, content라는 입력 항목이 있다.
