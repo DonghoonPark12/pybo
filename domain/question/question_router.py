@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 from sqlalchemy.orm import Session
 
@@ -10,7 +10,7 @@ from database import get_db
 from domain.user.user_router import get_current_user
 from models import Question, User
 from domain.question import question_schema
-from domain.question.question_schema import QuestionCreate
+from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete
 
 # router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
 router = APIRouter(
@@ -41,6 +41,32 @@ def question_create(_question_create: QuestionCreate, db: Session = Depends(get_
                     current_user: User = Depends(get_current_user)):
     create_question(db=db, question_create=_question_create, user=current_user)
 
+@router.put("/update", status_code=status.HTTP_204_NO_CONTENT)
+def question_update(_question_update: QuestionUpdate, db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
+    db_question = get_question(db, question_id=_question_update.question_id)
+    if not db_question:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Question not found")
+    if current_user.id != db_question.user.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="You are not authorized to perform this action")
+    update_question(db=db, db_question=db_question, question_update=_question_update)
+    return None
+
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
+def question_delete(_question_delete: QuestionDelete, db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
+    db_question = get_question(db, question_id=_question_delete.question_id)
+    if not db_question:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Question not found")
+    if current_user.id != db_question.user.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="You are not authorized to perform this action")
+    delete_question(db=db, db_question=db_question)
+
+# qustion_crud
 def get_question_list(db: Session, skip: int = 0, limit: int = 10):
     _question_list = db.query(Question)\
         .order_by(Question.create_date.desc())
@@ -61,6 +87,16 @@ def create_question(db: Session, question_create: QuestionCreate, user: User):
     db.add(db_question)
     db.commit()
 
+def update_question(db: Session, db_question: Question, question_update: QuestionUpdate):
+    db_question.subject = question_update.subject
+    db_question.content = question_update.content
+    db_question.modify_data = datetime.now()
+    db.add(db_question)
+    db.commit()
+
+def delete_question(db: Session, db_question: Question):
+    db.delete(db_question)
+    db.commit()
 
 '''
 response_model=list[question_schema.Question] 의미는

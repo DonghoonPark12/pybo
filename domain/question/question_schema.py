@@ -36,6 +36,9 @@ class QuestionList(BaseModel):
 class QuestionUpdate(QuestionCreate):
     question_id: int
 
+class QuestionDelete(BaseModel):
+    question_id: int
+
 '''
 models.py 파일에 정의한 Question 클래스는 Question 모델이라 하겠다.
 pydantic의 BaseModel을 상속한 Question 클래스를 앞으로 Question 스키마라 하겠다.
