@@ -7,6 +7,7 @@
     import UserCreate from "./routes/UserCreate.svelte"
     import UserLogin  from "./routes/UserLogin.svelte"
     import QuestionModify from "./routes/QuestionModify.svelte"
+    import AnswerModify from "./routes/AnswerModify.svelte"
 
     const routes = {
         // / 주소에 매핑되는 컴포넌트로 <Home />을 등록
@@ -17,6 +18,7 @@
         '/user-create': UserCreate,
         '/user-login': UserLogin,
         '/question-modify/:question_id': QuestionModify,
+        '/answer-modify/:answer_id': AnswerModify
 
     }
 </script>
