@@ -1,7 +1,24 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 from database import Base
+
+# sqlalchemy의 Table을 사용하여 N:N 관계를 의미하는 테이블을 먼저 생성
+# question_voter는 사용자 id와 질문 id가 모두 PK(프라이머리키)이므로 ManyToMany 관계가 성립
+# user_id와 question_id 는 프라이머리키이므로 두개의 값이 모두 같은 데이터는 저장될 수 없다
+question_voter = Table(
+    'question_voter',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('question_id', Integer, ForeignKey('question.id'), primary_key=True)
+)
+
+answer_voter = Table(
+    'answer_voter',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('answer_id', Integer, ForeignKey('answer.id'), primary_key=True)
+)
 
 class Question(Base):
     __tablename__ = "question"
@@ -18,6 +35,12 @@ class Question(Base):
 
     answers = relationship("Answer", back_populates="question")  # Answer 모델의 question 속성을 참조한다.
     user = relationship("User", backref="question_users")
+
+    # Question 모델에 추가한 voter는 추천인이므로 기본적으로 User 모델과 연결된 속성
+    # 눈여겨 볼 점은 secondary 값으로 위에서 생성한 question_voter 테이블 객체를 지정해 주었다는 점
+    # 이렇게 되면, Question 모델을 통해 추천인을 저장하면 실제 데이터는 question_voter 테이블에 저장되고
+    # 저장된 추천인 정보는 Question 모델의 voter 속성을 통해 참조할 수 있게 된다.
+    voter = relationship("User", secondary=question_voter, backref="question_voters")
 
 # question_id
 # - 해당 속성은 답변을 질문과 연결 하기 위해 추가한 속성
@@ -44,7 +67,7 @@ class Answer(Base):
     # 연결과 참조는 다르다.
     question = relationship("Question", back_populates="answers") # Quesion 모델의 answers 속성을 참조한다.
     user = relationship("User", backref="answers_users")
-
+    voter = relationship("User", secondary=answer_voter, backref="answer_voters")
 
 class User(Base):
     __tablename__ = "user"

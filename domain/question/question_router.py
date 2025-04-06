@@ -10,7 +10,7 @@ from database import get_db
 from domain.user.user_router import get_current_user
 from models import Question, User
 from domain.question import question_schema
-from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete
+from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete, QuestionVote
 
 # router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
 router = APIRouter(
@@ -66,6 +66,17 @@ def question_delete(_question_delete: QuestionDelete, db: Session = Depends(get_
                             detail="You are not authorized to perform this action")
     delete_question(db=db, db_question=db_question)
 
+@router.post("/vote", status_code=status.HTTP_204_NO_CONTENT)
+def question_vote(_question_vote: question_schema.QuestionVote,
+                  db: Session = Depends(get_db),
+                  current_user: User = Depends(get_current_user)):
+    db_question = get_question(db, question_id=_question_vote.question_id)
+    if not db_question:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="데이터를 찾을수 없습니다.")
+    vote_question(db, db_question=db_question, db_user=current_user)
+
+
 # qustion_crud
 def get_question_list(db: Session, skip: int = 0, limit: int = 10):
     _question_list = db.query(Question)\
@@ -96,6 +107,10 @@ def update_question(db: Session, db_question: Question, question_update: Questio
 
 def delete_question(db: Session, db_question: Question):
     db.delete(db_question)
+    db.commit()
+
+def vote_question(db: Session, db_question: Question, db_user: User):
+    db_question.voter.append(db_user)
     db.commit()
 
 '''

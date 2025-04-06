@@ -14,7 +14,8 @@ class Question(BaseModel):
     create_date: datetime.datetime
     answers: list[Answer] = []
     user: Optional[User]
-    modify_date: Optional[datetime.datetime]
+    modify_date: Optional[datetime.datetime] = None
+    voter: list[User] = []
 
     class Config:
         from_attributes = True # orm 모드를 활성화 하면, 모델의 항목이 자동으로 스키마로 매핑된다.
@@ -38,6 +39,9 @@ class QuestionUpdate(QuestionCreate):
     question_id: int
 
 class QuestionDelete(BaseModel):
+    question_id: int
+
+class QuestionVote(BaseModel):
     question_id: int
 
 '''

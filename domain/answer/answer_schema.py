@@ -21,7 +21,7 @@ class Answer(BaseModel):
     create_date: datetime.datetime
     user: Optional[User]
     question_id: int
-    modify_date: Optional[datetime.datetime]
+    modify_date: Optional[datetime.datetime] = None
 
     class Config:
         from_attributes = True
