@@ -3,3 +3,4 @@ myapi.db
 *.pyc
 __pycache__
 migrations/versions/*
+alembic.ini
