@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import and_
 from starlette import status
 from sqlalchemy.orm import Session
 
@@ -8,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from domain.user.user_router import get_current_user
-from models import Question, User
+from models import Question, User, Answer
 from domain.question import question_schema
 from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete, QuestionVote
 
@@ -19,11 +20,12 @@ router = APIRouter(
 
 @router.get("/list", response_model=question_schema.QuestionList)
 def question_list(db: Session = Depends(get_db),
-                  page: int = 0, size: int = 10):
+                  page: int = 0, size: int = 10,
+                  keyword: str = ''):
     #db = SessionLocal()
     #_question_list = db.query(Question).order_by(Question.create_date.desc()).all()
     total, _question_list = get_question_list(
-        db, skip=page * size, limit=size
+        db, skip=page * size, limit=size, keyword=keyword
     )
     #db.close() # 커넥션 풀을 종료, 세션 종료가 아니다.
     return {
@@ -78,13 +80,13 @@ def question_vote(_question_vote: question_schema.QuestionVote,
 
 
 # qustion_crud
-def get_question_list(db: Session, skip: int = 0, limit: int = 10):
-    _question_list = db.query(Question)\
-        .order_by(Question.create_date.desc())
-
-    total = _question_list.count()
-    _question_list = _question_list.offset(skip).limit(limit).all()
-    return total, _question_list # (전체 건수, 페이징 적용된 질문 목록)
+# def get_question_list(db: Session, skip: int = 0, limit: int = 10):
+#     _question_list = db.query(Question)\
+#         .order_by(Question.create_date.desc())
+#
+#     total = _question_list.count()
+#     _question_list = _question_list.offset(skip).limit(limit).all()
+#     return total, _question_list # (전체 건수, 페이징 적용된 질문 목록)
 
 def get_question(db: Session, question_id: int):
     question = db.query(Question).get(question_id)
@@ -113,6 +115,26 @@ def vote_question(db: Session, db_question: Question, db_user: User):
     db_question.voter.append(db_user)
     db.commit()
 
+# 검색 기능
+def get_question_list(db: Session, skip: int = 0, limit: int = 10, keyword: str = ''):
+    question_list = db.query(Question)
+    if keyword:
+        search = '%%{}%%'.format(keyword)
+        sub_query = db.query(Answer.question_id, Answer.content, User.username) \
+            .outerjoin(User, and_(Answer.user_id == User.id)).subquery()
+        question_list = question_list \
+            .outerjoin(User) \
+            .outerjoin(sub_query, and_(sub_query.c.question_id == Question.id)) \
+            .filter(Question.subject.ilike(search) |        # 질문제목
+                    Question.content.ilike(search) |        # 질문내용
+                    User.username.ilike(search) |           # 질문작성자
+                    sub_query.c.content.ilike(search) |     # 답변내용
+                    sub_query.c.username.ilike(search)      # 답변작성자
+                    )
+    total = question_list.distinct().count()
+    question_list = question_list.order_by(Question.create_date.desc())\
+        .offset(skip).limit(limit).distinct().all()
+    return total, question_list  # (전체 건수, 페이징 적용된 질문 목록)
 '''
 response_model=list[question_schema.Question] 의미는
 quesion_list 함수의 리턴 값은 Question 스키마로 구성된 리스트 임을 의미

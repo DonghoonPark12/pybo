@@ -60,3 +60,71 @@ parent = relationship("Parent", backref="children")  # only on the child class
 - DB에 저장하는 것과 실제 고객에 응답으로 전달하는 것을 다르게 하기 위함도 있다.
 
 - https://pydantic-docs.helpmanual.io/
+
+---
+### (4) Outer-Join
+- 예시
+  - 질문 데이터가 306개이고
+    - db.query(Question).count()
+  - 답변 데이터가 7개 일 때
+    - db.query(Answer).count()
+  - 두 데이터를 Join 하면 7개 데이터를 얻는다.
+    - db.query(Question).join(Answer).count()
+  - 이는 답변이 달리지 않는 조회되지 않기 때문인데, 이 문제를 해결하기 위해 Outer-Join 을 생각해 볼 수 있다.
+    - db.query(Question).outerjoin(Answer).count()
+    - 질문에 답변이 두개 이상 달리더라도 모두 조회된다.
+    - 조회된 질문	질문에 달린 답변	중복 여부
+      - 1	질문 1에 달린 답변1	중복
+      - 1	질문 1에 달린 답변2	중복
+      - 2	질문 2에 달린 답변1	중복
+      - 2	질문 2에 달린 답변2	중복
+      - 3	답변 없음	중복 아님
+      - …	…	…
+      - 306	답변 없음	중복 아님
+    - 이때 중복을 제거해야 할 필요가 있다.
+      - db.query(Question).outerjoin(Answer).distinct().count
+
+---
+### (5) Sub-Query
+- 검색 기능을 구현하려면, 답변 내용 뿐만 아니라 답변 작성자도 검색 조건에 포함해야 한다.
+- 답변 내용 검색은 Answer 모델을 아우터 조인하면 쉽게 해결되지만,
+- 답변 작성자를 조건에 추가하는 것은 쉽지 않다.
+- 예시)
+```
+sub_query = db.query(Answer.question_id, Answer.content, User.username)\
+                    .outerjoin(User, Answer.user_id == User.id).subquery()
+```
+- 이 서브쿼리는 답변 모델과 사용자 모델을 OuterJoin 하여 만든 것으로, Answer.content, User.username가 조회 항목으로 추가됨
+- 그리고 이 서브쿼리와 질문 모델을 연결할 수 있는 질문 id에 해당하는 Answer.question_id도 조회 항목에 추가되었다.
+- 이처럼 서브쿼리를 사용하면 다음과 같이 Question 모델과 서브쿼리를 OuterJoin할 수 있다.
+```
+db.query(Question).outerjoin(sub_query, sub_query.c.question_id == Question.id).distinct()
+```
+- sub_query.c.question_id에 사용한 c는 서브쿼리의 조회 항목을 의미
+- 이제 sub_query를 OuterJoin 했으므로 sub_query의 조회 항목을 filter 함수에 조건으로 추가할 수 있다.
+```
+db.query(Question).outerjoin(sub_query, sub_query.c.question_id == Question.id) \
+    .filter(sub_query.c.content.ilike('%파이썬%') |   # 답변내용
+           sub_query.c.username.ilike('%파이썬%')    # 답변작성자
+           ).distinct()
+
+```
+- 검색 코드
+```
+
+# 검색
+search = '%%{}%%'.format(keyword)
+sub_query = db.query(Answer.question_id, Answer.content, User.username)\
+    .outerjoin(User, Answer.user_id == User.id).subquery()
+question_list = db.query(Question)\
+    .outerjoin(User)\
+    .outerjoin(sub_query, sub_query.c.question_id == Question.id)\
+    .filter(Question.subject.ilike(search) |      # 질문제목
+            Question.content.ilike(search) |      # 질문내용
+            User.username.ilike(search) |         # 질문작성자
+            sub_query.c.content.ilike(search) |   # 답변내용
+            sub_query.c.username.ilike(search)    # 답변작성자
+            )\
+    .distinct()
+
+```

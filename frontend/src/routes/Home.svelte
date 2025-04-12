@@ -1,7 +1,7 @@
 <script>
     import fastapi from "../lib/api"
     import {link} from 'svelte-spa-router'
-    import {page, is_login} from '../lib/store'
+    import {page, keyword, is_login} from '../lib/store'
     import moment from 'moment/min/moment-with-locales'
     moment.locales('ko')
 
@@ -9,6 +9,7 @@
     let size = 10
     //let page = 0
     let total = 0
+    let kw = ''
 
     // 스벨트에서 변수앞에 $: 기호를 붙이면 해당 변수는 반응형 변수가 된다.
     // total 변수의 값이 API 호출로 인해 그 값이 변하면 total_page 변수의 값도 실시간으로 재 계산된다는 의미이다.
@@ -17,14 +18,15 @@
 
     function get_question_list(_page) {
         let params = {
-            page: _page,
+            page: $page,
             size: size,
+            keyword: $keyword,
         }
 
         fastapi('get', '/api/question/list', params, (json) => {
             question_list = json.question_list
-            $page = _page
             total = json.total
+            kw = $keyword
         })
 
         // success_callback 함수를 화살표 함수로 작성하여 전달
@@ -36,8 +38,10 @@
         //     })
         // })
     }
-
-    $: get_question_list($page)
+    // 위와 같이 $: 변수1, 변수2, 자바스크립트식 과 같이 사용하면 스벨트는
+    // "변수1" 또는 "변수2"의 값이 변경되는지를 감시하다가 값이 변경되면 자동으로 "자바스크립트식"을 실행
+    $: $page, $keyword, get_question_list()
+    //$: get_question_list($page)
     // let message, promise;
 
     // fetch("http://127.0.0.1:8000/hello").then(response => {
@@ -61,6 +65,20 @@
 </script>
 
 <div class="container my-3">
+    <div class="row my-3">
+        <div class="col-6">
+            <a use:link href="/question-create"
+                class="btn btn-primary {$is_login ? '' : 'disabled'}">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <input type="text" class="form-control" bind:value="{kw}">
+                <button class="btn btn-outline-secondary" on:click={() => {$keyword = kw, $page = 0}}>
+                    찾기
+                </button>
+            </div>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr class="text-center table-dark">
@@ -93,25 +111,25 @@
     <ul class="pagination justify-content-center">
         <!-- 이전페이지 -->
         <li class="page-item {$page <= 0 && 'disabled'}">
-            <button class="page-link" on:click="{() => get_question_list($page-1)}">Previous</button>
+            <button class="page-link" on:click="{() => $page--}">Previous</button>
         </li>
         <!-- 페이지번호 -->
         {#each Array(total_page) as _, loop_page}
             <!--    {#if loop_page >= page && loop_page <= page+5}-->
             {#if loop_page >= Math.floor($page/6) * 6 && loop_page < Math.floor($page/6) * 6 + 6}
             <li class="page-item {loop_page === $page && 'active'}">
-                <button on:click="{() => get_question_list(loop_page)}" class="page-link">{loop_page+1}</button>
+                <button on:click="{() => $page = loop_page}" class="page-link">{loop_page+1}</button>
             </li>
             {/if}
         {/each}
         <!-- 다음페이지 -->
         <li class="page-item {$page >= total_page-1 && 'disabled'}">
-            <button class="page-link" on:click="{() => get_question_list($page+1)}">Next</button>
+            <button class="page-link" on:click="{() => $page++}">Next</button>
         </li>
     </ul>
     <!-- 페이징처리 끝 -->
-
-    <a use:link href="/question-create" class="btn btn-primary {$is_login ? '' : 'disabled'}">질문 등록하기</a>
+<!--    <a use:link href="/question-create"-->
+<!--       class="btn btn-primary {$is_login ? '' : 'disabled'}">질문 등록하기</a>-->
 </div>
 
 <!--&lt;!&ndash;<h1>{message}</h1>&ndash;&gt;-->
