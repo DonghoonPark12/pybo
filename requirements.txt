@@ -1,4 +1,6 @@
 fastapi
+alembic
+pydantic_settings
 uvicorn[standard]
 sqlalchemy
 pymysql
