@@ -52,12 +52,16 @@ create_date	답변 작성일시
   - sudo apt install python3-venv
   - sudo apt install alembic
 - DB 설정
-  - $ sudo apt-get install mysql-server
-  - $ sudo ufw allow mysql
-  - $ sudo mysql
-  - $ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'XXXX';
-  - $ CREATE DATABASE pybo;
-  - $ FLUSH PRIVILEGES;
+  - 직접 설치
+    - $ sudo apt-get install mysql-server
+    - $ sudo ufw allow mysql
+    - $ sudo mysql
+    - $ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'XXXX';
+    - $ CREATE DATABASE pybo;
+    - $ FLUSH PRIVILEGES;
+  - 도커로 설정
+    - docker run --name mysql-local -p 3306:3306/tcp -e MYSQL_ROOT_PASSWORD=XXXXXX -d mysql:8
+    - 
 
 
 ### TODO  
