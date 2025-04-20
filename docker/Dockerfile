@@ -20,7 +20,6 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 WORKDIR /app
 
 COPY requirements.txt .
-COPY .env .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
