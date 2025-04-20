@@ -20,11 +20,11 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 WORKDIR /app
 
 COPY requirements.txt .
-COPY .env /app
+COPY .env .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./app /app
 
 # timezone 설정
-CMD sh -c "uvicorn main:app --port 8000 --reload --env-file .env"
+CMD sh -c "uvicorn main:app --port 8000 --host 0.0.0.0 --reload --env-file /app/.env"
