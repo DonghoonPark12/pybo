@@ -50,13 +50,23 @@ create_date	답변 작성일시
   - git clone https://github.com/DonghoonPark12/pybo.git
   - python3 -m .venv my_thought
   - sudo apt install python3-venv
+  - sudo apt install alembic
 - DB 설정
   - $ sudo apt-get install mysql-server
+  - $ sudo ufw allow mysql
+  - $ sudo mysql
+  - $ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'XXXX';
+  - $ CREATE DATABASE pybo;
+  - $ FLUSH PRIVILEGES;
 
 
 ### TODO  
 [] 도커 이미지로 ubuntu에서 실행시키기
-  - [] mysql 세팅
+  - [O] mysql 세팅. 
+  - [O] Dockerfile 작성
+  - [] CICD 적용. 
+  - [] WebSocker 적용. 
+ 
 [] 답변 페이징과 정렬 기능 추가
 [] 댓글 기능 추가
 [] 카테고리 기능 추가
@@ -76,3 +86,14 @@ sudo mkdir -p /etc/mysql/conf.d
 sudo apt install mysql-server
 ```
 - 참조: https://stackoverflow.com/questions/70813122/getting-error-mysql-service-failed-because-the-control-process-exited-with-erro
+- 메모리가 부족할 경우
+```
+스왑 공간 추가/확장:
+sudo fallocate -l 1G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+영구적으로 적용하려면 /etc/fstab에 추가:
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```

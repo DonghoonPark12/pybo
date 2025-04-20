@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
@@ -7,7 +8,7 @@ from domain.question import question_router
 from domain.answer import answer_router
 from domain.user import user_router
 
-import models
+import models as models
 from database import engine
 
 #
@@ -43,3 +44,6 @@ app.mount("/assets", StaticFiles(directory="frontend/dist/assets"))
 @app.get("/")
 def index():
     return FileResponse("frontend/dist/index.html")
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=8000)

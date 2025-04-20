@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node --inspect-brk ./node_modules/vite/bin/vite.js",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "node --inspect-brk node_modules/vite/bin/vite.js",
+    "build": "node_modules/.bin/vite build",
+    "preview": "node_modules/.bin/vite preview"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",

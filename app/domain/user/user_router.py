@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from database import get_db
-from domain.user import user_schema, user_crud
+from domain.user import user_crud, user_schema
 from domain.user.user_crud import pwd_context
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24

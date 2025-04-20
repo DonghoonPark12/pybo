@@ -1,6 +1,6 @@
 <script>
     import { push } from 'svelte-spa-router'
-    import fastapi from "../lib/api"
+    import fastapi from "../lib/api.js"
     import Error from "../components/Error.svelte"
 
     let error = {detail:[]}

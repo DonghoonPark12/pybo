@@ -1,6 +1,6 @@
 <script>
     import { push } from 'svelte-spa-router'
-    import fastapi from "../lib/api"
+    import fastapi from "../lib/api.js"
     import Error from "../components/Error.svelte"
     import {access_token, username, is_login} from "../lib/store.js";
 

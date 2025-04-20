@@ -11,7 +11,7 @@ from database import get_db
 from domain.user.user_router import get_current_user
 from models import Question, User, Answer
 from domain.question import question_schema
-from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete, QuestionVote
+from domain.question.question_schema import QuestionCreate, QuestionUpdate, QuestionDelete
 
 # router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
 router = APIRouter(

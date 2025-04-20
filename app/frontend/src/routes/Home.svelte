@@ -1,7 +1,7 @@
 <script>
-    import fastapi from "../lib/api"
+    import fastapi from "../lib/api.js"
     import {link} from 'svelte-spa-router'
-    import {page, keyword, is_login} from '../lib/store'
+    import {page, keyword, is_login} from '../lib/store.js'
     import moment from 'moment/min/moment-with-locales'
     moment.locales('ko')
 

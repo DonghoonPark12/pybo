@@ -1,9 +1,9 @@
 <script>
-    import fastapi from "../lib/api";
+    import fastapi from "../lib/api.js";
     import {get} from "svelte/store";
     import Error from "../components/Error.svelte";
     import { link, push } from "svelte-spa-router"
-    import { is_login, username } from "../lib/store"
+    import { is_login, username } from "../lib/store.js"
     import { marked } from "marked";
     import moment from 'moment/min/moment-with-locales'
     import Button from "bootstrap/js/src/button.js";
