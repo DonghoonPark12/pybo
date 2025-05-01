@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from core.config import get_settings
-
+from app.core.config import get_settings
+from app.core.logger import logger
 # sqlite3 데이터베이스의 파일을 의미하며 프로젝트 루트 디렉터리에 저장한다는 의미
 SQLALCHEMY_DATABASE_URL = get_settings().database_url
 
@@ -14,6 +14,10 @@ engine = create_engine(
     url=SQLALCHEMY_DATABASE_URL,
     #connect_args={"check_same_thread": False}
 )
+
+logger.info(f"SQLALCHEMY_DATABASE_URL: {SQLALCHEMY_DATABASE_URL}")
+
+
 
 # SessionLocal은 데이터베이스에 접속하기 위해 필요한 클래스
 # create_ending, sessionmaker 등을 사용하는 것은 sqlalchemy 데이터베이스 사용하기 위한 규칙

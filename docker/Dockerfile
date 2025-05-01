@@ -26,4 +26,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./app /app
 
 # timezone 설정
-CMD sh -c "uvicorn main:app --port 8000 --host 0.0.0.0 --reload --env-file /app/.env"
+CMD sh -c "uvicorn main:app --port 8000 --host 0.0.0.0 --reload --env-file .env"

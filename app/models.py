@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from database import Base
+from app.database import Base
 
 # sqlalchemy의 Table을 사용하여 N:N 관계를 의미하는 테이블을 먼저 생성
 # question_voter는 사용자 id와 질문 id가 모두 PK(프라이머리키)이므로 ManyToMany 관계가 성립

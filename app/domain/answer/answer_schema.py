@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, field_validator
 
-from domain.user.user_schema import User
+from app.domain.user.user_schema import User
 
 
 class AnswerCreate(BaseModel):

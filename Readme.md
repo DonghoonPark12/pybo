@@ -66,7 +66,7 @@ create_date	답변 작성일시
 
 ### TODO  
 [] 도커 이미지로 ubuntu에서 실행시키기
-  - [O] mysql 세팅. 
+  - [O] mysql 도커 세팅. 
   - [O] Dockerfile 작성
   - [] CICD 적용. 
   - [] WebSocker 적용. 

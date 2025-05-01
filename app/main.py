@@ -4,12 +4,12 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
-from domain.question import question_router
-from domain.answer import answer_router
-from domain.user import user_router
+from app.domain.question import question_router
+from app.domain.answer import answer_router
+from app.domain.user import user_router
 
-import models as models
-from database import engine
+import app.models as models
+from app.database import engine
 
 #
 # # Base 클래스를 상속받은 모든 클래스를 데이터베이스에 생성
@@ -39,11 +39,11 @@ app.add_middleware(
 app.include_router(question_router.router)
 app.include_router(answer_router.router)
 app.include_router(user_router.router)
-app.mount("/assets", StaticFiles(directory="frontend/dist/assets"))
+app.mount("/assets", StaticFiles(directory="app/frontend/dist/assets"))
 
 @app.get("/")
 def index():
-    return FileResponse("frontend/dist/index.html")
+    return FileResponse("app/frontend/dist/index.html")
 
 if __name__ == "__main__":
     uvicorn.run(app, port=8000)
