@@ -69,7 +69,8 @@ create_date	답변 작성일시
   - [O] mysql 도커 세팅. 
   - [O] Dockerfile 작성
   - [] CICD 적용. 
-  - [] WebSocker 적용. 
+  - [] WebSocket 적용. 
+  - [O] 도메인 연결 (donghoonnotes.com)
  
 [] 답변 페이징과 정렬 기능 추가
 [] 댓글 기능 추가

@@ -4,3 +4,4 @@ myapi.db
 __pycache__
 migrations/versions/*
 alembic.ini
+.env
